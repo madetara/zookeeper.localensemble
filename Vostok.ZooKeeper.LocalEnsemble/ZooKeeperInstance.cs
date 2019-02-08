@@ -17,7 +17,7 @@ namespace Vostok.ZooKeeper.LocalEnsemble
     [PublicAPI]
     public class ZooKeeperInstance
     {
-        private const string ServerScriptName = "zkServer.cmd";
+        private string ServerScriptName => OsIsUnix() ? "zkServer.sh" : "zkServer.cmd";
 
         private readonly WindowsProcessKillJob processKillJob;
 

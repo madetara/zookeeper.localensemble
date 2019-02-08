@@ -84,6 +84,8 @@ namespace Vostok.ZooKeeper.LocalEnsemble
             // (iloktionov): Control scripts. 
             SaveResources(instance.BinDirectory, "zkEnv.cmd");
             SaveResources(instance.BinDirectory, "zkServer.cmd");
+            SaveResources(instance.BinDirectory, "zkEnv.sh");
+            SaveResources(instance.BinDirectory, "zkServer.sh");
             // (iloktionov): Actual ZK lib.
             SaveResources(instance.BaseDirectory, "zookeeper_3_4_5.jar");
             // (iloktionov): Configs.

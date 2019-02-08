@@ -28,7 +28,9 @@
     <None Remove="Resources\slf4j_api_1_6_1.jar" />
     <None Remove="Resources\slf4j_log4j12_1_6_1.jar" />
     <None Remove="Resources\zkEnv.cmd" />
+    <None Remove="Resources\zkEnv.sh" />
     <None Remove="Resources\zkServer.cmd" />
+    <None Remove="Resources\zkServer.sh" />
     <None Remove="Resources\zookeeper_3_4_5.jar" />
   </ItemGroup>
   <ItemGroup>
@@ -39,7 +41,9 @@
     <EmbeddedResource Include="Resources\slf4j_api_1_6_1.jar" />
     <EmbeddedResource Include="Resources\slf4j_log4j12_1_6_1.jar" />
     <EmbeddedResource Include="Resources\zkEnv.cmd" />
+    <EmbeddedResource Include="Resources\zkEnv.sh" />
     <EmbeddedResource Include="Resources\zkServer.cmd" />
+    <EmbeddedResource Include="Resources\zkServer.sh" />
     <EmbeddedResource Include="Resources\zookeeper_3_4_5.jar" />
   </ItemGroup>
   <ItemGroup>
