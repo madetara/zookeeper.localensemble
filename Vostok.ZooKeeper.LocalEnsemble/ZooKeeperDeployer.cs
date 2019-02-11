@@ -81,11 +81,8 @@ namespace Vostok.ZooKeeper.LocalEnsemble
             SaveResources(instance.LibDirectory, "netty_3_2_2_Final.jar");
             SaveResources(instance.LibDirectory, "slf4j_api_1_6_1.jar");
             SaveResources(instance.LibDirectory, "slf4j_log4j12_1_6_1.jar");
-            // (iloktionov): Control scripts. 
-            SaveResources(instance.BinDirectory, "zkEnv.cmd");
-            SaveResources(instance.BinDirectory, "zkServer.cmd");
-            SaveResources(instance.BinDirectory, "zkEnv.sh");
-            SaveResources(instance.BinDirectory, "zkServer.sh");
+            // (iloktionov): Control scripts.
+            Directory.CreateDirectory(instance.BinDirectory);
             // (iloktionov): Actual ZK lib.
             SaveResources(instance.BaseDirectory, "zookeeper_3_4_5.jar");
             // (iloktionov): Configs.

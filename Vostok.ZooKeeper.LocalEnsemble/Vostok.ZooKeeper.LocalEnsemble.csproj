@@ -40,10 +40,6 @@
     <EmbeddedResource Include="Resources\netty_3_2_2_Final.jar" />
     <EmbeddedResource Include="Resources\slf4j_api_1_6_1.jar" />
     <EmbeddedResource Include="Resources\slf4j_log4j12_1_6_1.jar" />
-    <EmbeddedResource Include="Resources\zkEnv.cmd" />
-    <EmbeddedResource Include="Resources\zkEnv.sh" />
-    <EmbeddedResource Include="Resources\zkServer.cmd" />
-    <EmbeddedResource Include="Resources\zkServer.sh" />
     <EmbeddedResource Include="Resources\zookeeper_3_4_5.jar" />
   </ItemGroup>
   <ItemGroup>

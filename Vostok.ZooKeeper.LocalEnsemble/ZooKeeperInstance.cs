@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using JetBrains.Annotations;
 using Vostok.Logging.Abstractions;
 using Vostok.ZooKeeper.LocalEnsemble.Misc;
@@ -14,8 +15,6 @@ namespace Vostok.ZooKeeper.LocalEnsemble
     [PublicAPI]
     public class ZooKeeperInstance
     {
-        private string ServerScriptName => OsHelper.IsUnix ? "zkServer.sh" : "zkServer.cmd";
-
         private readonly WindowsProcessKillJob processKillJob;
 
         private Process process;
@@ -79,23 +78,17 @@ namespace Vostok.ZooKeeper.LocalEnsemble
         /// <summary>
         /// Check that instance is running.
         /// </summary>
-        public bool IsRunning => process != null && !process.HasExited;
+        public bool IsRunning => process?.HasExited == false;
 
         /// <summary>
         /// <para>Starts instance.</para>
         /// </summary>
         public void Start()
         {
-            if (OsHelper.IsUnix)
+                
+            var processStartInfo = new ProcessStartInfo("java")
             {
-                process = Process.Start($"/bin/bash", $"-lc \"chmod u+x {Path.Combine(BinDirectory, ServerScriptName)}\"");
-                process?.WaitForExit();
-                if (process?.ExitCode != 0)
-                    throw new Exception($"Failed to make script executable.");
-            }
-            
-            var processStartInfo = new ProcessStartInfo(Path.Combine(BinDirectory, ServerScriptName))
-            {
+                Arguments = BuildRunZooKeeperArguments(),
                 UseShellExecute = false,
                 CreateNoWindow = true,
                 RedirectStandardOutput = true,
@@ -110,11 +103,7 @@ namespace Vostok.ZooKeeper.LocalEnsemble
                 throw new Exception($"Failed to start process of participant '{Id}'.");
 
             InstancesHelper.WaitAndCheckInstancesAreRunning(new List<ZooKeeperInstance> {this});
-            ProcessHelper.WaitTillJavaProcessSpawns(process, TimeSpan.FromSeconds(1));
-
-            foreach (var childProcess in ProcessHelper.GetChildJavaProcesses(process))
-                processKillJob?.AddProcess(childProcess);
-
+            
             processKillJob?.AddProcess(process);
         }
 
@@ -123,26 +112,8 @@ namespace Vostok.ZooKeeper.LocalEnsemble
         /// </summary>
         public void Stop()
         {
-            if (process == null)
-                return;
-            if (!process.HasExited)
+            if (process?.HasExited == false)
             {
-                foreach (var childProcess in ProcessHelper.GetChildJavaProcesses(process))
-                {
-                    if (!childProcess.HasExited)
-                    {
-                        try
-                        {
-                            childProcess.Kill();
-                            childProcess.WaitForExit();
-                        }
-                        catch
-                        {
-                            // ignored
-                        }
-                    }
-                }
-
                 if (!process.HasExited)
                 {
                     try
@@ -162,5 +133,15 @@ namespace Vostok.ZooKeeper.LocalEnsemble
 
         /// <returns>String representation of ZooKeeperInstance.</returns>
         public override string ToString() => $"localhost:{ClientPort}:{PeerPort}:{ElectionPort} (id {Id}) at '{BaseDirectory}'";
+
+        private string BuildRunZooKeeperArguments()
+        {
+            var classPaths = new[] { BaseDirectory, LibDirectory, ConfDirectory };
+            var joinedClassPaths = string.Join(":", classPaths.Select(p => Path.Combine(p, "*")));
+
+            var result = $"-Dzookeeper.log.dir={BaseDirectory} -Dzookeeper.root.logger=INFO,CONSOLE -cp {joinedClassPaths} -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.local.only=false org.apache.zookeeper.server.quorum.QuorumPeerMain {Path.Combine(ConfDirectory, "zoo.cfg")}";
+
+            return result;
+        }
     }
 }
