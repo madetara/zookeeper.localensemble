@@ -9,6 +9,7 @@ using Vostok.Commons.Time;
 
 namespace Vostok.ZooKeeper.LocalEnsemble.Misc
 {
+    // NOTE(kungurtsev): Remove this trash after release https://github.com/dotnet/corefx/issues/26234 (.NET CORE 3?)
     internal static class ProcessHelper
     {
         public static void WaitTillJavaProcessSpawns(Process parentProcess, TimeSpan timeout)
