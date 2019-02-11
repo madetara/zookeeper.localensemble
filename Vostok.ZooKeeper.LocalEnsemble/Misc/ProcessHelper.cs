@@ -22,6 +22,8 @@ namespace Vostok.ZooKeeper.LocalEnsemble.Misc
 
                 Thread.Sleep(TimeSpan.FromMilliseconds(10));
             }
+
+            throw new Exception($"Not found java process for {GetProcessNameSafely(parentProcess)}");
         }
 
         public static IEnumerable<Process> GetChildJavaProcesses(Process parent)
@@ -45,7 +47,7 @@ namespace Vostok.ZooKeeper.LocalEnsemble.Misc
 
         private static List<Process> GetChildProcesses(Process process)
         {
-            Console.WriteLine($"SEARCHING CHILDREN FOR {process.ProcessName} {process.Id}");
+            Console.WriteLine($"SEARCHING CHILDREN FOR {GetProcessNameSafely(process)}");
             var processes = Process.GetProcesses();
             var result = new List<Process>();
 
@@ -55,7 +57,7 @@ namespace Vostok.ZooKeeper.LocalEnsemble.Misc
                 {
                     if (IsParentOf(possibleChild, process))
                     {
-                        Console.WriteLine($"FOUND CHILD {possibleChild.ProcessName} {possibleChild.Id}");
+                        Console.WriteLine($"FOUND CHILD {GetProcessNameSafely(possibleChild)}");
                         result.Add(possibleChild);
                     }
                 }
@@ -71,7 +73,7 @@ namespace Vostok.ZooKeeper.LocalEnsemble.Misc
         private static bool IsParentOf(Process possibleParent, Process possibleChild)
         {
             var parentProcessId = GetParentProcessId(possibleChild);
-            Console.WriteLine($"PROCESS {possibleChild.ProcessName} {possibleChild.Id} {parentProcessId}");
+            Console.WriteLine($"PROCESS {GetProcessNameSafely(possibleChild)} {parentProcessId}");
             return possibleParent.StartTime < possibleChild.StartTime
                    && possibleParent.Id == parentProcessId;
         }
@@ -92,6 +94,18 @@ namespace Vostok.ZooKeeper.LocalEnsemble.Misc
             }
 
             return -1;
+        }
+
+        private static string GetProcessNameSafely(Process process)
+        {
+            try
+            {
+                return $"{process.ProcessName} {process.Id}";
+            }
+            catch (Exception e)
+            {
+                return $"Exited? {e.Message}";
+            }
         }
     }
 }
