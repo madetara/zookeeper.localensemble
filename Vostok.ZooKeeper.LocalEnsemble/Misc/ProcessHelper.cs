@@ -78,13 +78,13 @@ namespace Vostok.ZooKeeper.LocalEnsemble.Misc
                    && possibleParent.Id == parentProcessId;
         }
 
-        private static int GetParentProcessId(Process processId)
+        private static int GetParentProcessId(Process process)
         {
             string line;
-            using (var reader = new StreamReader("/proc/" + processId + "/stat"))
+            using (var reader = new StreamReader("/proc/" + process.Id + "/stat"))
                 line = reader.ReadLine();
 
-            var endOfName = line?.LastIndexOf(')') ?? throw new Exception($"Process {processId} not found");
+            var endOfName = line?.LastIndexOf(')') ?? throw new Exception($"Process {process} not found");
             var parts = line.Substring(endOfName).Split(new char[] { ' ' }, 4);
 
             if (parts.Length >= 3)
