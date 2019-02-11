@@ -89,11 +89,20 @@ namespace Vostok.ZooKeeper.LocalEnsemble
         /// </summary>
         public void Start()
         {
+            if (OsIsUnix())
+            {
+                process = Process.Start($"/bin/bash", $"-lc \"chmod u+x {Path.Combine(BinDirectory, ServerScriptName)}\"");
+                process?.WaitForExit();
+                if (process?.ExitCode != 0)
+                    throw new Exception($"Failed to make script executable.");
+            }
+            
             var processStartInfo = new ProcessStartInfo(Path.Combine(BinDirectory, ServerScriptName))
             {
                 UseShellExecute = false,
                 CreateNoWindow = true,
                 RedirectStandardOutput = true,
+                RedirectStandardError = true,
                 WorkingDirectory = BinDirectory
             };
             process = new Process
