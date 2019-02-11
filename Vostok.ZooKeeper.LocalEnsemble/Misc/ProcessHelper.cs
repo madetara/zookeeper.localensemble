@@ -52,8 +52,12 @@ namespace Vostok.ZooKeeper.LocalEnsemble.Misc
             {
                 try
                 {
+                    Console.WriteLine($"CHECKING {process.ProcessName} {process.Id}");
                     if (IsParentOf(possibleChild, process))
+                    {
+                        Console.WriteLine($"FOUND CHILD {process.ProcessName} {process.Id}");
                         result.Add(possibleChild);
+                    }
                 }
                 catch (Exception)
                 {
