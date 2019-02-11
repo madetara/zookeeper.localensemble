@@ -112,19 +112,16 @@ namespace Vostok.ZooKeeper.LocalEnsemble
         /// </summary>
         public void Stop()
         {
-            if (process?.HasExited == false)
+            if (IsRunning)
             {
-                if (!process.HasExited)
+                try
                 {
-                    try
-                    {
-                        process.Kill();
-                        process.WaitForExit();
-                    }
-                    catch
-                    {
-                        // ignored
-                    }
+                    process.Kill();
+                    process.WaitForExit();
+                }
+                catch
+                {
+                    // ignored
                 }
             }
 
