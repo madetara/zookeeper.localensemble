@@ -61,9 +61,9 @@ namespace Vostok.ZooKeeper.LocalEnsemble.Misc
                         result.Add(possibleChild);
                     }
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-                    // ignored
+                    Console.WriteLine(e);
                 }
             }
 
