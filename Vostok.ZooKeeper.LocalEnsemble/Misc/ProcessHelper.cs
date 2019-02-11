@@ -55,7 +55,7 @@ namespace Vostok.ZooKeeper.LocalEnsemble.Misc
             {
                 try
                 {
-                    if (IsParentOf(possibleChild, process))
+                    if (IsParentOf(process, possibleChild))
                     {
                         Console.WriteLine($"FOUND CHILD {GetProcessNameSafely(possibleChild)}");
                         result.Add(possibleChild);
@@ -72,10 +72,10 @@ namespace Vostok.ZooKeeper.LocalEnsemble.Misc
 
         private static bool IsParentOf(Process possibleParent, Process possibleChild)
         {
-            var parentProcessId = GetParentProcessId(possibleChild);
-            Console.WriteLine($"PROCESS {GetProcessNameSafely(possibleChild)} {parentProcessId}");
+            var childParentProcessId = GetParentProcessId(possibleChild);
+            Console.WriteLine($"PROCESS {GetProcessNameSafely(possibleChild)} {childParentProcessId}");
             return possibleParent.StartTime < possibleChild.StartTime
-                   && possibleParent.Id == parentProcessId;
+                   && possibleParent.Id == childParentProcessId;
         }
 
         private static int GetParentProcessId(Process process)
