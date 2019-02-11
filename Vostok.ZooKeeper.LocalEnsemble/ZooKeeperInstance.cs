@@ -2,12 +2,9 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Management;
-using System.Threading;
 using JetBrains.Annotations;
-using Vostok.Commons.Time;
 using Vostok.Logging.Abstractions;
+using Vostok.ZooKeeper.LocalEnsemble.Misc;
 
 namespace Vostok.ZooKeeper.LocalEnsemble
 {
@@ -17,7 +14,7 @@ namespace Vostok.ZooKeeper.LocalEnsemble
     [PublicAPI]
     public class ZooKeeperInstance
     {
-        private string ServerScriptName => OsIsUnix() ? "zkServer.sh" : "zkServer.cmd";
+        private string ServerScriptName => OsHelper.IsUnix ? "zkServer.sh" : "zkServer.cmd";
 
         private readonly WindowsProcessKillJob processKillJob;
 
@@ -31,7 +28,7 @@ namespace Vostok.ZooKeeper.LocalEnsemble
             ClientPort = clientPort;
             PeerPort = peerPort;
             ElectionPort = electionPort;
-            processKillJob = OsIsUnix() ? null : new WindowsProcessKillJob(log);
+            processKillJob = OsHelper.IsUnix ? null : new WindowsProcessKillJob(log);
         }
 
         /// <summary>
@@ -89,7 +86,7 @@ namespace Vostok.ZooKeeper.LocalEnsemble
         /// </summary>
         public void Start()
         {
-            if (OsIsUnix())
+            if (OsHelper.IsUnix)
             {
                 process = Process.Start($"/bin/bash", $"-lc \"chmod u+x {Path.Combine(BinDirectory, ServerScriptName)}\"");
                 process?.WaitForExit();
@@ -113,9 +110,9 @@ namespace Vostok.ZooKeeper.LocalEnsemble
                 throw new Exception($"Failed to start process of participant '{Id}'.");
 
             InstancesHelper.WaitAndCheckInstancesAreRunning(new List<ZooKeeperInstance> {this});
-            WaitTillJavaProcessSpawns(process, TimeSpan.FromSeconds(1));
+            ProcessHelper.WaitTillJavaProcessSpawns(process, TimeSpan.FromSeconds(1));
 
-            foreach (var childProcess in GetChildJavaProcesses(process.Id))
+            foreach (var childProcess in ProcessHelper.GetChildJavaProcesses(process))
                 processKillJob?.AddProcess(childProcess);
 
             processKillJob?.AddProcess(process);
@@ -130,7 +127,7 @@ namespace Vostok.ZooKeeper.LocalEnsemble
                 return;
             if (!process.HasExited)
             {
-                foreach (var childProcess in GetChildJavaProcesses(process.Id))
+                foreach (var childProcess in ProcessHelper.GetChildJavaProcesses(process))
                 {
                     if (!childProcess.HasExited)
                     {
@@ -141,6 +138,7 @@ namespace Vostok.ZooKeeper.LocalEnsemble
                         }
                         catch
                         {
+                            // ignored
                         }
                     }
                 }
@@ -154,6 +152,7 @@ namespace Vostok.ZooKeeper.LocalEnsemble
                     }
                     catch
                     {
+                        // ignored
                     }
                 }
             }
@@ -163,33 +162,5 @@ namespace Vostok.ZooKeeper.LocalEnsemble
 
         /// <returns>String representation of ZooKeeperInstance.</returns>
         public override string ToString() => $"localhost:{ClientPort}:{PeerPort}:{ElectionPort} (id {Id}) at '{BaseDirectory}'";
-
-        private static bool OsIsUnix() => Environment.OSVersion.Platform == PlatformID.Unix;
-
-        private static void WaitTillJavaProcessSpawns(Process parentProcess, TimeSpan timeout)
-        {
-            var budget = TimeBudget.StartNew(timeout);
-
-            while (!budget.HasExpired)
-            {
-                if (GetChildJavaProcesses(parentProcess.Id).Any())
-                    return;
-
-                Thread.Sleep(TimeSpan.FromMilliseconds(10));
-            }
-        }
-
-        private static IEnumerable<Process> GetChildJavaProcesses(int parentId)
-        {
-            using (var searcher = new ManagementObjectSearcher("select ProcessId from Win32_Process where ParentProcessId=" + parentId))
-            {
-                return searcher
-                    .Get()
-                    .Cast<ManagementBaseObject>()
-                    .Select(m => Convert.ToInt32(m["ProcessId"]))
-                    .Select(Process.GetProcessById)
-                    .Where(p => p.ProcessName.Contains("java"));
-            }
-        }
     }
 }
