@@ -22,21 +22,14 @@
 # otherwise we use /etc/zookeeper
 # or the conf directory that is
 # a sibling of this script's directory
-
-ZOOBINDIR=${ZOOBINDIR:-/usr/bin}
-ZOOKEEPER_PREFIX=${ZOOBINDIR}/..
-
 if [ "x$ZOOCFGDIR" = "x" ]
 then
-  if [ -e "${ZOOKEEPER_PREFIX}/conf" ]; then
-    ZOOCFGDIR="$ZOOBINDIR/../conf"
-  else
-    ZOOCFGDIR="$ZOOBINDIR/../etc/zookeeper"
-  fi
-fi
-
-if [ -f "${ZOOCFGDIR}/zookeeper-env.sh" ]; then
-  . "${ZOOCFGDIR}/zookeeper-env.sh"
+    if [ -d "/etc/zookeeper" ]
+    then
+        ZOOCFGDIR="/etc/zookeeper"
+    else
+        ZOOCFGDIR="$ZOOBINDIR/../conf"
+    fi
 fi
 
 if [ "x$ZOOCFG" = "x" ]
@@ -46,7 +39,7 @@ fi
 
 ZOOCFG="$ZOOCFGDIR/$ZOOCFG"
 
-if [ -f "$ZOOCFGDIR/java.env" ]
+if [ -e "$ZOOCFGDIR/java.env" ]
 then
     . "$ZOOCFGDIR/java.env"
 fi
@@ -61,12 +54,6 @@ then
     ZOO_LOG4J_PROP="INFO,CONSOLE"
 fi
 
-if [ "$JAVA_HOME" != "" ]; then
-  JAVA="$JAVA_HOME/bin/java"
-else
-  JAVA=java
-fi
-
 #add the zoocfg dir to classpath
 CLASSPATH="$ZOOCFGDIR:$CLASSPATH"
 
@@ -75,19 +62,14 @@ do
     CLASSPATH="$i:$CLASSPATH"
 done
 
-#make it work in the binary package
-if [ -e ${ZOOKEEPER_PREFIX}/share/zookeeper/zookeeper-*.jar ]; then
-  LIBPATH="${ZOOKEEPER_PREFIX}"/share/zookeeper/*.jar
-else
-  #release tarball format
-  for i in "$ZOOBINDIR"/../zookeeper-*.jar
-  do
+#make it work in the release
+for i in "$ZOOBINDIR"/../lib/*.jar
+do
     CLASSPATH="$i:$CLASSPATH"
-  done
-  LIBPATH="${ZOOBINDIR}"/../lib/*.jar
-fi
+done
 
-for i in ${LIBPATH}
+#make it work in the release
+for i in "$ZOOBINDIR"/../zookeeper-*.jar
 do
     CLASSPATH="$i:$CLASSPATH"
 done
