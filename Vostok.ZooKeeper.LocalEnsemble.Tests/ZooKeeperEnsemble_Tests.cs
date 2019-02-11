@@ -35,11 +35,11 @@ namespace Vostok.ZooKeeper.LocalEnsemble.Tests
         {
             using (var ensemble = ZooKeeperEnsemble.DeployNew(3, new ConsoleLog()))
             {
-                ensemble.Instances[index].IsRunning.Should().BeTrue();
+                ensemble.Instances[index].IsRunning.Should().BeTrue("Before stop.");
                 ensemble.Instances[index].Stop();
-                ensemble.Instances[index].IsRunning.Should().BeFalse();
+                ensemble.Instances[index].IsRunning.Should().BeFalse("After stop.");
                 ensemble.Instances[index].Start();
-                ensemble.Instances[index].IsRunning.Should().BeTrue();
+                ensemble.Instances[index].IsRunning.Should().BeTrue("After restart.");
             }
         }
     }
