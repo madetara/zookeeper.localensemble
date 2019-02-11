@@ -45,6 +45,7 @@ namespace Vostok.ZooKeeper.LocalEnsemble.Misc
 
         private static List<Process> GetChildProcesses(Process process)
         {
+            Console.WriteLine($"SEARCHING CHILDREN FOR {process.ProcessName} {process.Id}");
             var processes = Process.GetProcesses();
             var result = new List<Process>();
 
@@ -52,7 +53,6 @@ namespace Vostok.ZooKeeper.LocalEnsemble.Misc
             {
                 try
                 {
-                    Console.WriteLine($"CHECKING {possibleChild.ProcessName} {possibleChild.Id}");
                     if (IsParentOf(possibleChild, process))
                     {
                         Console.WriteLine($"FOUND CHILD {possibleChild.ProcessName} {possibleChild.Id}");
@@ -70,11 +70,13 @@ namespace Vostok.ZooKeeper.LocalEnsemble.Misc
 
         private static bool IsParentOf(Process possibleParent, Process possibleChild)
         {
+            var parentProcessId = GetParentProcessId(possibleChild);
+            Console.WriteLine($"PROCESS {possibleChild.ProcessName} {possibleChild.Id} {parentProcessId}");
             return possibleParent.StartTime < possibleChild.StartTime
-                   && possibleParent.Id == GetParentProcessId(possibleParent.Id);
+                   && possibleParent.Id == parentProcessId;
         }
 
-        private static int GetParentProcessId(int processId)
+        private static int GetParentProcessId(Process processId)
         {
             string line;
             using (var reader = new StreamReader("/proc/" + processId + "/stat"))
