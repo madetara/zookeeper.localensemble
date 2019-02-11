@@ -73,7 +73,8 @@ namespace Vostok.ZooKeeper.LocalEnsemble.Misc
         private static bool IsParentOf(Process possibleParent, Process possibleChild)
         {
             var childParentProcessId = GetParentProcessId(possibleChild);
-            Console.WriteLine($"PROCESS {GetProcessNameSafely(possibleChild)} {childParentProcessId}");
+            if (possibleChild.ProcessName == "java")
+                Console.WriteLine($"PROCESS {GetProcessNameSafely(possibleChild)} {childParentProcessId}");
             return possibleParent.StartTime < possibleChild.StartTime
                    && possibleParent.Id == childParentProcessId;
         }
