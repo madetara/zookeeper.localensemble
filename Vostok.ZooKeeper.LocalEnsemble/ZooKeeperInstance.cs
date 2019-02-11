@@ -134,7 +134,7 @@ namespace Vostok.ZooKeeper.LocalEnsemble
         private string BuildRunZooKeeperArguments()
         {
             var classPaths = new[] { BaseDirectory, LibDirectory, ConfDirectory };
-            var joinedClassPaths = string.Join(":", classPaths.Select(p => Path.Combine(p, "*")));
+            var joinedClassPaths = string.Join(OsHelper.PathDelimiter, classPaths.Select(p => Path.Combine(p, "*")));
 
             var result = $"-Dzookeeper.log.dir={BaseDirectory} -Dzookeeper.root.logger=INFO,CONSOLE -cp {joinedClassPaths} -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.local.only=false org.apache.zookeeper.server.quorum.QuorumPeerMain {Path.Combine(ConfDirectory, "zoo.cfg")}";
 
