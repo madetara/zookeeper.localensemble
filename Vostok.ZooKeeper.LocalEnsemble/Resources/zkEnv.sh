@@ -15,82 +15,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# This script should be sourced into other zookeeper
-# scripts to setup the env variables
+DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
-# We use ZOOCFGDIR if defined,
-# otherwise we use /etc/zookeeper
-# or the conf directory that is
-# a sibling of this script's directory
-if [ "x$ZOOCFGDIR" = "x" ]
-then
-    if [ -d "/etc/zookeeper" ]
-    then
-        ZOOCFGDIR="/etc/zookeeper"
-    else
-        ZOOCFGDIR="$ZOOBINDIR/../conf"
-    fi
-fi
+ZOOCFGDIR="$DIR/../conf"
 
-if [ "x$ZOOCFG" = "x" ]
-then
-    ZOOCFG="zoo.cfg"
-fi
+ZOO_LOG_DIR="$DIR/../"
 
-ZOOCFG="$ZOOCFGDIR/$ZOOCFG"
+ZOO_LOG4J_PROP=INFO,CONSOLE
 
-if [ -e "$ZOOCFGDIR/java.env" ]
-then
-    . "$ZOOCFGDIR/java.env"
-fi
+CLASSPATH=$ZOOCFGDIR
+CLASSPATH="$DIR/../*:$DIR/../lib/*:$CLASSPATH"
 
-if [ "x${ZOO_LOG_DIR}" = "x" ]
-then
-    ZOO_LOG_DIR="."
-fi
-
-if [ "x${ZOO_LOG4J_PROP}" = "x" ]
-then
-    ZOO_LOG4J_PROP="INFO,CONSOLE"
-fi
-
-#add the zoocfg dir to classpath
-CLASSPATH="$ZOOCFGDIR:$CLASSPATH"
-
-for i in "$ZOOBINDIR"/../src/java/lib/*.jar
-do
-    CLASSPATH="$i:$CLASSPATH"
-done
-
-#make it work in the release
-for i in "$ZOOBINDIR"/../lib/*.jar
-do
-    CLASSPATH="$i:$CLASSPATH"
-done
-
-#make it work in the release
-for i in "$ZOOBINDIR"/../zookeeper-*.jar
-do
-    CLASSPATH="$i:$CLASSPATH"
-done
-
-#make it work for developers
-for d in "$ZOOBINDIR"/../build/lib/*.jar
-do
-   CLASSPATH="$d:$CLASSPATH"
-done
-
-#make it work for developers
-CLASSPATH="$ZOOBINDIR/../build/classes:$CLASSPATH"
-
-case "`uname`" in
-    CYGWIN*) cygwin=true ;;
-    *) cygwin=false ;;
-esac
-
-if $cygwin
-then
-    CLASSPATH=`cygpath -wp "$CLASSPATH"`
-fi
-
-#echo "CLASSPATH=$CLASSPATH"
+ZOOCFG="$ZOOCFGDIR/zoo.cfg"

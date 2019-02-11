@@ -53,15 +53,8 @@ ZOOBINDIR=`dirname "$ZOOBIN"`
 
 . "$ZOOBINDIR"/zkEnv.sh
 
-if [ "x$2" != "x" ]
-then
-    ZOOCFG="$ZOOCFGDIR/$2"
-fi
-
 if $cygwin
 then
-    ZOOCFG=`cygpath -wp "$ZOOCFG"`
-    # cygwin has a "kill" in the shell itself, gets confused
     KILL=/bin/kill
 else
     KILL=kill
@@ -69,52 +62,6 @@ fi
 
 echo "Using config: $ZOOCFG"
 
-ZOOPIDFILE=$(grep dataDir "$ZOOCFG" | sed -e 's/.*=//')/zookeeper_server.pid
-
-
-case $1 in
-start)
-    echo  "Starting zookeeper ... "
-    java  "-Dzookeeper.log.dir=${ZOO_LOG_DIR}" "-Dzookeeper.root.logger=${ZOO_LOG4J_PROP}" \
-    -cp "$CLASSPATH" $JVMFLAGS $ZOOMAIN "$ZOOCFG" &
-    echo -n $! > "$ZOOPIDFILE"
-    echo STARTED
-    ;;
-stop)
-    echo "Stopping zookeeper ... "
-    if [ ! -f "$ZOOPIDFILE" ]
-    then
-    echo "error: could not find file $ZOOPIDFILE"
-    exit 1
-    else
-    $KILL -9 $(cat "$ZOOPIDFILE")
-    rm "$ZOOPIDFILE"
-    echo STOPPED
-    fi
-    ;;
-upgrade)
-    shift
-    echo "upgrading the servers to 3.*"
-    java "-Dzookeeper.log.dir=${ZOO_LOG_DIR}" "-Dzookeeper.root.logger=${ZOO_LOG4J_PROP}" \
-    -cp "$CLASSPATH" $JVMFLAGS org.apache.zookeeper.server.upgrade.UpgradeMain ${@}
-    echo "Upgrading ... "
-    ;;
-restart)
-    shift
-    "$0" stop ${@}
-    sleep 3
-    "$0" start ${@}
-    ;;
-status)
-    STAT=`echo stat | nc localhost $(grep clientPort "$ZOOCFG" | sed -e 's/.*=//') 2> /dev/null| grep Mode`
-    if [ "x$STAT" = "x" ]
-    then
-        echo "Error contacting service. It is probably not running."
-    else
-        echo $STAT
-    fi
-    ;;
-*)
-    echo "Usage: $0 {start|stop|restart|status}" >&2
-
-esac
+echo  "Starting zookeeper ... "
+java  "-Dzookeeper.log.dir=${ZOO_LOG_DIR}" "-Dzookeeper.root.logger=${ZOO_LOG4J_PROP}" -cp "$CLASSPATH" $JVMFLAGS $ZOOMAIN "$ZOOCFG"
+echo DONE
