@@ -47,7 +47,6 @@ namespace Vostok.ZooKeeper.LocalEnsemble.Misc
 
         private static List<Process> GetChildProcesses(Process process)
         {
-            Console.WriteLine($"SEARCHING CHILDREN FOR {GetProcessNameSafely(process)}");
             var processes = Process.GetProcesses();
             var result = new List<Process>();
 
@@ -57,13 +56,12 @@ namespace Vostok.ZooKeeper.LocalEnsemble.Misc
                 {
                     if (IsParentOf(process, possibleChild))
                     {
-                        Console.WriteLine($"FOUND CHILD {GetProcessNameSafely(possibleChild)}");
                         result.Add(possibleChild);
                     }
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
-                    Console.WriteLine(e);
+                    // ignored
                 }
             }
 
@@ -73,10 +71,7 @@ namespace Vostok.ZooKeeper.LocalEnsemble.Misc
         private static bool IsParentOf(Process possibleParent, Process possibleChild)
         {
             var childParentProcessId = GetParentProcessId(possibleChild);
-            if (possibleChild.ProcessName == "java")
-                Console.WriteLine($"PROCESS {GetProcessNameSafely(possibleChild)} {childParentProcessId}");
-            return possibleParent.StartTime <= possibleChild.StartTime
-                   && possibleParent.Id == childParentProcessId;
+            return possibleParent.Id == childParentProcessId;
         }
 
         private static int GetParentProcessId(Process process)
