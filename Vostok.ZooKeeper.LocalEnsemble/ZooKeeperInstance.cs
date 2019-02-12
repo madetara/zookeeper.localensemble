@@ -133,10 +133,15 @@ namespace Vostok.ZooKeeper.LocalEnsemble
 
         private string BuildRunZooKeeperArguments()
         {
-            var classPaths = new[] { BaseDirectory, LibDirectory, ConfDirectory };
-            var joinedClassPaths = string.Join(OsHelper.PathDelimiter, classPaths.Select(p => Path.Combine(p, "*")));
+            var classPaths = new[]
+            {
+                Path.Combine(BaseDirectory, "*"),
+                Path.Combine(LibDirectory, "*"),
+                ConfDirectory
+            };
+            var joinedClassPaths = string.Join(OsHelper.PathDelimiter, classPaths);
 
-            var result = $"-Dzookeeper.log.dir={BaseDirectory} -Dzookeeper.root.logger=INFO,CONSOLE -cp {joinedClassPaths} org.apache.zookeeper.server.quorum.QuorumPeerMain {Path.Combine(ConfDirectory, "zoo.cfg")}";
+            var result = $"\"-Dzookeeper.log.dir={BaseDirectory}\" \"-Dzookeeper.root.logger=DEBUG,ROLLINGFILE\" -cp \"{joinedClassPaths}\" org.apache.zookeeper.server.quorum.QuorumPeerMain \"{Path.Combine(ConfDirectory, "zoo.cfg")}\"";
 
             return result;
         }

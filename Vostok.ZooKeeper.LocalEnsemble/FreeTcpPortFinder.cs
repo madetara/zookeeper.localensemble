@@ -18,6 +18,10 @@ namespace Vostok.ZooKeeper.LocalEnsemble
                     tcpListener.Start();
                     return port++;
                 }
+                catch
+                {
+                    // ignored
+                }
                 finally
                 {
                     tcpListener.Stop();
