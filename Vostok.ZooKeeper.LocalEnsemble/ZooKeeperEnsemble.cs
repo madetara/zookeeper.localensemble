@@ -22,7 +22,7 @@ namespace Vostok.ZooKeeper.LocalEnsemble
         /// <inheritdoc cref="ZooKeeperInstance" />
         public ZooKeeperEnsemble(int size, ILog log)
         {
-            this.log = log.ForContext("ZKEnsemble");
+            this.log = log.ForContext("ZooKeeperEnsemble");
             if (size < 1)
                 throw new ArgumentOutOfRangeException(nameof(size));
             Instances = CreateInstances(size, this.log);
@@ -90,11 +90,11 @@ namespace Vostok.ZooKeeper.LocalEnsemble
         {
             if (!isRunning)
             {
-                log.Info("Starting instances..");
+                log.Info("Starting ensemble...");
                 foreach (var instance in Instances)
                     instance.Start();
                 InstancesHelper.WaitAndCheckInstancesAreRunning(Instances);
-                log.Info("Started successfully!");
+                log.Info("Started ensemble successfully.");
                 isRunning = true;
             }
         }
@@ -106,10 +106,10 @@ namespace Vostok.ZooKeeper.LocalEnsemble
         {
             if (isRunning)
             {
-                log.Info("Stopping instances..");
+                log.Info("Stopping ensemble...");
                 foreach (var instance in Instances)
                     instance.Stop();
-                log.Info("Stopped successfully!");
+                log.Info("Stopped ensemble successfully.");
                 isRunning = false;
             }
         }
@@ -123,9 +123,9 @@ namespace Vostok.ZooKeeper.LocalEnsemble
             if (!isDisposed)
             {
                 Stop();
-                log.Info("Cleaning directories..");
+                log.Info("Cleaning directories...");
                 ZooKeeperDeployer.CleanupInstances(Instances);
-                log.Info("Cleaned directories successfully!");
+                log.Info("Cleaned directories successfully.");
                 isDisposed = true;
             }
         }
