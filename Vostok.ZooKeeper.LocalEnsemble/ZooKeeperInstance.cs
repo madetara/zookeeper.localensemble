@@ -15,6 +15,7 @@ namespace Vostok.ZooKeeper.LocalEnsemble
     [PublicAPI]
     public class ZooKeeperInstance
     {
+        private readonly ILog log;
         private readonly WindowsProcessKillJob processKillJob;
 
         private Process process;
@@ -22,6 +23,7 @@ namespace Vostok.ZooKeeper.LocalEnsemble
         /// <inheritdoc cref="ZooKeeperInstance" />
         public ZooKeeperInstance(int id, string baseDirectory, int clientPort, int peerPort, int electionPort, ILog log)
         {
+            this.log = log;
             Id = id;
             BaseDirectory = baseDirectory;
             ClientPort = clientPort;
@@ -118,6 +120,7 @@ namespace Vostok.ZooKeeper.LocalEnsemble
                 {
                     process.Kill();
                     process.WaitForExit();
+                    log.Debug($"INSTANCE {Id} LOG:\n" + File.ReadAllText(Path.Combine(BaseDirectory, $"ZK-{Id}.log")));
                 }
                 catch
                 {
