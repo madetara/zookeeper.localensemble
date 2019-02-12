@@ -22,7 +22,7 @@ namespace Vostok.ZooKeeper.LocalEnsemble
                     return;
                 }
 
-                Thread.Sleep(100);
+                Thread.Sleep(1000);
             }
 
             throw new Exception($"{idleInstances} of {instances.Count} instances have not started.");
