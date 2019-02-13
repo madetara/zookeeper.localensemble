@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using Vostok.Commons.Time;
 
 namespace Vostok.ZooKeeper.LocalEnsemble
 {
@@ -22,7 +23,7 @@ namespace Vostok.ZooKeeper.LocalEnsemble
                     return;
                 }
 
-                Thread.Sleep(1000);
+                Thread.Sleep(5.Seconds());
             }
 
             throw new Exception($"{idleInstances} of {instances.Count} instances have not started.");
