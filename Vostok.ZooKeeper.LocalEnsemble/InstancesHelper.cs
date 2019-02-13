@@ -19,11 +19,11 @@ namespace Vostok.ZooKeeper.LocalEnsemble
                 idleInstances = instances.Count(instance => !instance.IsRunning);
                 if (idleInstances == 0)
                 {
-                    Thread.Sleep(TimeSpan.FromSeconds(1));
+                    Thread.Sleep(5.Seconds());
                     return;
                 }
 
-                Thread.Sleep(5.Seconds());
+                Thread.Sleep(1.Seconds());
             }
 
             throw new Exception($"{idleInstances} of {instances.Count} instances have not started.");
