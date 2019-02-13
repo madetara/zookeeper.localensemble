@@ -1,33 +1,22 @@
-﻿using System;
-using System.Net;
+﻿using System.Net;
 using System.Net.Sockets;
 
 namespace Vostok.ZooKeeper.LocalEnsemble
 {
     internal static class FreeTcpPortFinder
     {
-        private static int port = 43333;
-
         public static int GetFreePort()
         {
-            for (int times = 0; times < 1000; port++, times++)
+            var tcpListener = new TcpListener(IPAddress.Loopback, 0);
+            try
             {
-                var tcpListener = new TcpListener(IPAddress.Loopback, port);
-                try
-                {
-                    tcpListener.Start();
-                    return port++;
-                }
-                catch
-                {
-                    // ignored
-                }
-                finally
-                {
-                    tcpListener.Stop();
-                }
+                tcpListener.Start();
+                return ((IPEndPoint)tcpListener.LocalEndpoint).Port;
             }
-            throw new Exception("Free port not found.");
+            finally
+            {
+                tcpListener.Stop();
+            }
         }
     }
 }
