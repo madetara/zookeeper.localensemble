@@ -103,8 +103,6 @@ namespace Vostok.ZooKeeper.LocalEnsemble
             };
             if (!process.Start())
                 throw new Exception($"Failed to start process of participant '{Id}'.");
-
-            InstancesHelper.WaitAndCheckInstancesAreRunning(new List<ZooKeeperInstance> {this});
             
             processKillJob?.AddProcess(process);
         }

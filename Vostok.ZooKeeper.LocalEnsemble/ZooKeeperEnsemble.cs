@@ -93,7 +93,6 @@ namespace Vostok.ZooKeeper.LocalEnsemble
                 log.Info("Starting ensemble...");
                 foreach (var instance in Instances)
                     instance.Start();
-                InstancesHelper.WaitAndCheckInstancesAreRunning(Instances);
                 log.Info("Started ensemble successfully.");
                 isRunning = true;
             }
