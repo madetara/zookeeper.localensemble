@@ -35,10 +35,11 @@ namespace Vostok.ZooKeeper.LocalEnsemble
         /// </summary>
         /// <param name="size">Amount of instances.</param>
         /// <param name="log"><see cref="ILog" /> instance.</param>
-        public static ZooKeeperEnsemble DeployNew(int size, ILog log)
+        /// <param name="startInstances">Starts instances after deploy or not.</param>
+        public static ZooKeeperEnsemble DeployNew(int size, ILog log, bool startInstances = true)
         {
             var ensemble = new ZooKeeperEnsemble(size, log);
-            ensemble.Deploy();
+            ensemble.Deploy(startInstances);
             return ensemble;
         }
 
@@ -68,12 +69,14 @@ namespace Vostok.ZooKeeper.LocalEnsemble
         /// <summary>
         /// Deploys <see cref="ZooKeeperEnsemble" /> to folder.
         /// </summary>
-        public void Deploy()
+        /// <param name="startInstances">Starts instances after deploy or not.</param>
+        public void Deploy(bool startInstances = true)
         {
             try
             {
                 ZooKeeperDeployer.DeployInstances(Instances);
-                Start();
+                if (startInstances)
+                    Start();
             }
             catch (Exception error)
             {
