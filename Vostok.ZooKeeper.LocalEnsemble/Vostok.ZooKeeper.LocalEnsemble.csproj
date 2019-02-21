@@ -46,6 +46,9 @@
     <PackageReference Include="System.Management" Version="4.5.0" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\vostok.commons.helpers\Vostok.Commons.Helpers\Network\FreeTcpPortFinder.cs" Link="Commons\FreeTcpPortFinder.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="Vostok.Logging.Abstractions">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\vostok.logging.abstractions\Vostok.Logging.Abstractions\bin\Release\netstandard2.0\Vostok.Logging.Abstractions.dll</HintPath>

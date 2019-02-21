@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using JetBrains.Annotations;
+using Vostok.Commons.Helpers.Network;
 using Vostok.Logging.Abstractions;
 
 namespace Vostok.ZooKeeper.LocalEnsemble

@@ -118,7 +118,7 @@ namespace Vostok.ZooKeeper.LocalEnsemble
                 {
                     process.Kill();
                     process.WaitForExit();
-                    log.Debug($"INSTANCE {Id} LOG:\n" + File.ReadAllText(Path.Combine(BaseDirectory, $"ZK-{Id}.log")));
+                    //log.Debug($"INSTANCE {Id} LOG:\n" + File.ReadAllText(Path.Combine(BaseDirectory, $"ZK-{Id}.log")));
                 }
                 catch
                 {
