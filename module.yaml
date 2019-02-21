@@ -10,6 +10,7 @@ notests *default:
     - nuget System.Management/4.5.0
 
   deps:
+    - vostok.commons.helpers/src
     - vostok.commons.environment
     - vostok.logging.console
     - vostok.commons.time
