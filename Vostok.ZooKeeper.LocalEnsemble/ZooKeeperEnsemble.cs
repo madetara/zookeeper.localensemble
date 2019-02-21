@@ -57,7 +57,7 @@ namespace Vostok.ZooKeeper.LocalEnsemble
         /// <param name="startInstances">Starts instances after deploy or not.</param>
         public static ZooKeeperEnsemble DeployNew(int from, int size, ILog log, bool startInstances = true)
         {
-            var ensemble = new ZooKeeperEnsemble(size, log);
+            var ensemble = new ZooKeeperEnsemble(from, size, log);
             ensemble.Deploy(startInstances);
             return ensemble;
         }
