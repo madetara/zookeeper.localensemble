@@ -20,7 +20,7 @@ namespace Vostok.ZooKeeper.LocalEnsemble.Tests
         [TestCase(3)]
         public void DeployNew_should_not_run_instances_if_specified(int instances)
         {
-            using (var ensemble = ZooKeeperEnsemble.DeployNew(instances, new ConsoleLog(), startInstances: false))
+            using (var ensemble = ZooKeeperEnsemble.DeployNew(instances, new ConsoleLog(), false))
             {
                 ensemble.IsRunning.Should().BeFalse();
             }

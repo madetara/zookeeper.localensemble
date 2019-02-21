@@ -87,7 +87,6 @@ namespace Vostok.ZooKeeper.LocalEnsemble
         /// </summary>
         public void Start()
         {
-                
             var processStartInfo = new ProcessStartInfo("java")
             {
                 Arguments = BuildRunZooKeeperArguments(),
@@ -103,7 +102,7 @@ namespace Vostok.ZooKeeper.LocalEnsemble
             };
             if (!process.Start())
                 throw new Exception($"Failed to start process of participant '{Id}'.");
-            
+
             processKillJob?.AddProcess(process);
         }
 
