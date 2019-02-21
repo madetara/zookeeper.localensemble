@@ -22,11 +22,17 @@ namespace Vostok.ZooKeeper.LocalEnsemble
 
         /// <inheritdoc cref="ZooKeeperInstance" />
         public ZooKeeperEnsemble(int size, ILog log)
+            : this(1, size, log)
+        {
+        }
+
+        /// <inheritdoc cref="ZooKeeperInstance" />
+        public ZooKeeperEnsemble(int from, int size, ILog log)
         {
             this.log = log.ForContext("ZooKeeperEnsemble");
             if (size < 1)
                 throw new ArgumentOutOfRangeException(nameof(size));
-            Instances = CreateInstances(size, this.log);
+            Instances = CreateInstances(from, size, this.log);
 
             log.Info("Created instances: \n\t" + string.Join("\n\t", Instances.Select(i => i.ToString())));
         }
@@ -38,6 +44,18 @@ namespace Vostok.ZooKeeper.LocalEnsemble
         /// <param name="log"><see cref="ILog" /> instance.</param>
         /// <param name="startInstances">Starts instances after deploy or not.</param>
         public static ZooKeeperEnsemble DeployNew(int size, ILog log, bool startInstances = true)
+        {
+            return DeployNew(1, size, log, startInstances);
+        }
+
+        /// <summary>
+        /// Creates and deploys new <see cref="ZooKeeperEnsemble" />
+        /// </summary>
+        /// <param name="from">First instance index.</param>
+        /// <param name="size">Amount of instances.</param>
+        /// <param name="log"><see cref="ILog" /> instance.</param>
+        /// <param name="startInstances">Starts instances after deploy or not.</param>
+        public static ZooKeeperEnsemble DeployNew(int from, int size, ILog log, bool startInstances = true)
         {
             var ensemble = new ZooKeeperEnsemble(size, log);
             ensemble.Deploy(startInstances);
@@ -133,7 +151,7 @@ namespace Vostok.ZooKeeper.LocalEnsemble
             }
         }
 
-        private static List<ZooKeeperInstance> CreateInstances(int size, ILog log)
+        private static List<ZooKeeperInstance> CreateInstances(int index, int size, ILog log)
         {
             var instances = new List<ZooKeeperInstance>(size);
             for (var i = 1; i <= size; i++)
@@ -141,7 +159,7 @@ namespace Vostok.ZooKeeper.LocalEnsemble
                 var clientPort = FreeTcpPortFinder.GetFreePort();
                 var peerPort = FreeTcpPortFinder.GetFreePort();
                 var electionPort = FreeTcpPortFinder.GetFreePort();
-                instances.Add(new ZooKeeperInstance(i, new DirectoryInfo("ZK-" + i).FullName, clientPort, peerPort, electionPort, log));
+                instances.Add(new ZooKeeperInstance(index, new DirectoryInfo("ZK-" + index).FullName, clientPort, peerPort, electionPort, log));
             }
 
             return instances;
