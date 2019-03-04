@@ -12,12 +12,12 @@
   </PropertyGroup>
   <PropertyGroup>
     <Title>Vostok.ZooKeeper.LocalEnsemble</Title>
-    <Description>Vostok.ZooKeeper.LocalEnsemble</Description>
+    <Description>Local ZooKeeper cluster runner for testing needs.</Description>
   </PropertyGroup>
   <PropertyGroup>
     <PackageProjectUrl>https://github.com/vostok/zookeeper.localensemble</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/vostok/zookeeper.localensemble/blob/master/LICENSE</PackageLicenseUrl>
-    <PackageTags>vostok</PackageTags>
+    <PackageTags>vostok vostok.zookeeper</PackageTags>
     <RepositoryUrl>https://github.com/vostok/zookeeper.localensemble</RepositoryUrl>
   </PropertyGroup>
   <ItemGroup>
