@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using JetBrains.Annotations;
+using Vostok.Commons.Time;
 using Vostok.Logging.Abstractions;
 using Vostok.ZooKeeper.LocalEnsemble.Misc;
 
@@ -17,8 +16,8 @@ namespace Vostok.ZooKeeper.LocalEnsemble
     {
         private readonly ILog log;
         private readonly WindowsProcessKillJob processKillJob;
-
         private Process process;
+        private readonly ZooKeeperHealthChecker healthChecker;
 
         /// <inheritdoc cref="ZooKeeperInstance" />
         public ZooKeeperInstance(int id, string baseDirectory, int clientPort, int peerPort, int electionPort, ILog log)
@@ -30,6 +29,7 @@ namespace Vostok.ZooKeeper.LocalEnsemble
             PeerPort = peerPort;
             ElectionPort = electionPort;
             processKillJob = OsHelper.IsUnix ? null : new WindowsProcessKillJob(log);
+            healthChecker = new ZooKeeperHealthChecker(this.log, "localhost", clientPort);
         }
 
         /// <summary>
@@ -100,7 +100,8 @@ namespace Vostok.ZooKeeper.LocalEnsemble
             {
                 StartInfo = processStartInfo
             };
-            if (!process.Start())
+
+            if (!process.Start() || !healthChecker.WaitStarted(20.Seconds()))
                 throw new Exception($"Failed to start process of participant '{Id}'.");
 
             processKillJob?.AddProcess(process);

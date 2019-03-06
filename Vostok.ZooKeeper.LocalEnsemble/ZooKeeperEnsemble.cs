@@ -112,11 +112,12 @@ namespace Vostok.ZooKeeper.LocalEnsemble
         {
             if (!isRunning)
             {
+                isRunning = true;
+
                 log.Info("Starting ensemble...");
                 foreach (var instance in Instances)
                     instance.Start();
                 log.Info("Started ensemble successfully.");
-                isRunning = true;
             }
         }
 
@@ -131,6 +132,7 @@ namespace Vostok.ZooKeeper.LocalEnsemble
                 foreach (var instance in Instances)
                     instance.Stop();
                 log.Info("Stopped ensemble successfully.");
+
                 isRunning = false;
             }
         }
@@ -159,7 +161,8 @@ namespace Vostok.ZooKeeper.LocalEnsemble
                 var clientPort = FreeTcpPortFinder.GetFreePort();
                 var peerPort = FreeTcpPortFinder.GetFreePort();
                 var electionPort = FreeTcpPortFinder.GetFreePort();
-                instances.Add(new ZooKeeperInstance(from + i, new DirectoryInfo("ZK-" + from).FullName, clientPort, peerPort, electionPort, log));
+                var index = from + i;
+                instances.Add(new ZooKeeperInstance(index, new DirectoryInfo("ZK-" + index).FullName, clientPort, peerPort, electionPort, log));
             }
 
             return instances;
