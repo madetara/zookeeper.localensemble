@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
+using Vostok.Logging.Abstractions;
 using Vostok.Logging.Console;
 
 namespace Vostok.ZooKeeper.LocalEnsemble.Tests
@@ -7,11 +8,13 @@ namespace Vostok.ZooKeeper.LocalEnsemble.Tests
     [TestFixture]
     internal class ZooKeeperEnsemble_Tests
     {
+        private readonly ILog log = new SynchronousConsoleLog();
+
         [TestCase(1)]
         [TestCase(5)]
         public void DeployNew_should_run_instances(int instances)
         {
-            using (var ensemble = ZooKeeperEnsemble.DeployNew(instances, new ConsoleLog()))
+            using (var ensemble = ZooKeeperEnsemble.DeployNew(instances, log))
             {
                 ensemble.IsRunning.Should().BeTrue();
             }
@@ -20,7 +23,7 @@ namespace Vostok.ZooKeeper.LocalEnsemble.Tests
         [TestCase(3)]
         public void DeployNew_should_not_run_instances_if_specified(int instances)
         {
-            using (var ensemble = ZooKeeperEnsemble.DeployNew(instances, new ConsoleLog(), false))
+            using (var ensemble = ZooKeeperEnsemble.DeployNew(instances, log, false))
             {
                 ensemble.IsRunning.Should().BeFalse();
             }
@@ -29,11 +32,11 @@ namespace Vostok.ZooKeeper.LocalEnsemble.Tests
         [TestCase(3)]
         public void DeployNew_should_run_multiple_times(int instances)
         {
-            using (ZooKeeperEnsemble.DeployNew(instances, new ConsoleLog()))
+            using (ZooKeeperEnsemble.DeployNew(instances, log))
             {
             }
 
-            using (ZooKeeperEnsemble.DeployNew(instances, new ConsoleLog()))
+            using (ZooKeeperEnsemble.DeployNew(instances, log))
             {
             }
         }
@@ -43,7 +46,7 @@ namespace Vostok.ZooKeeper.LocalEnsemble.Tests
         [TestCase(2)]
         public void Instances_should_be_stoppable_and_startable(int index)
         {
-            using (var ensemble = ZooKeeperEnsemble.DeployNew(3, new ConsoleLog()))
+            using (var ensemble = ZooKeeperEnsemble.DeployNew(3, log))
             {
                 ensemble.Instances[index].IsRunning.Should().BeTrue("Before stop.");
                 ensemble.Instances[index].Stop();
