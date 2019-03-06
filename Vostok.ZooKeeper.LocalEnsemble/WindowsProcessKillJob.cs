@@ -7,7 +7,7 @@ using Vostok.ZooKeeper.LocalEnsemble.WinApi;
 
 namespace Vostok.ZooKeeper.LocalEnsemble
 {
-    internal class WindowsProcessKillJob : IWindowsProcessKillJob, IDisposable
+    internal class WindowsProcessKillJob : IDisposable
     {
         private readonly IntPtr jobHandle;
         private readonly IntPtr jobObjectInfoPtr;
