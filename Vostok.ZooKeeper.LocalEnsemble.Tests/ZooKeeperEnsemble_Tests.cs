@@ -20,6 +20,17 @@ namespace Vostok.ZooKeeper.LocalEnsemble.Tests
             }
         }
 
+        [Test]
+        public void DeployNew_should_use_from_index()
+        {
+            using (var ensemble1 = ZooKeeperEnsemble.DeployNew(1, 3, log))
+                using (var ensemble2 = ZooKeeperEnsemble.DeployNew(10, 3, log))
+                {
+                    ensemble1.IsRunning.Should().BeTrue();
+                    ensemble2.IsRunning.Should().BeTrue();
+                }
+        }
+
         [TestCase(3)]
         public void DeployNew_should_not_run_instances_if_specified(int instances)
         {

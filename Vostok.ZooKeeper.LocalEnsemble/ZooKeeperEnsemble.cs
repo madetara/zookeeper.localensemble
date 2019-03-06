@@ -29,12 +29,12 @@ namespace Vostok.ZooKeeper.LocalEnsemble
         /// <inheritdoc cref="ZooKeeperInstance" />
         public ZooKeeperEnsemble(int from, int size, ILog log)
         {
-            this.log = log.ForContext($"ZooKeeperEnsemble[{from}:{from+size - 1}]");
+            this.log = log.ForContext($"ZooKeeperEnsemble[{from}:{from + size - 1}]");
             if (size < 1)
                 throw new ArgumentOutOfRangeException(nameof(size));
             Instances = CreateInstances(from, size, this.log);
 
-            log.Info("Created instances: \n\t" + string.Join("\n\t", Instances.Select(i => i.ToString())));
+            this.log.Info("Created instances: \n\t" + string.Join("\n\t", Instances.Select(i => i.ToString())));
         }
 
         /// <summary>
@@ -75,7 +75,7 @@ namespace Vostok.ZooKeeper.LocalEnsemble
         /// <summary>
         /// Returns <see cref="ZooKeeperInstance" /> instances of ensemble.
         /// </summary>
-        public List<ZooKeeperInstance> Instances { get; }
+        public IReadOnlyList<ZooKeeperInstance> Instances { get; }
 
         /// <summary>
         /// Returns ensemble connection string.
@@ -151,15 +151,15 @@ namespace Vostok.ZooKeeper.LocalEnsemble
             }
         }
 
-        private static List<ZooKeeperInstance> CreateInstances(int index, int size, ILog log)
+        private static List<ZooKeeperInstance> CreateInstances(int from, int size, ILog log)
         {
             var instances = new List<ZooKeeperInstance>(size);
-            for (var i = 1; i <= size; i++)
+            for (var i = 0; i < size; i++)
             {
                 var clientPort = FreeTcpPortFinder.GetFreePort();
                 var peerPort = FreeTcpPortFinder.GetFreePort();
                 var electionPort = FreeTcpPortFinder.GetFreePort();
-                instances.Add(new ZooKeeperInstance(index, new DirectoryInfo("ZK-" + index).FullName, clientPort, peerPort, electionPort, log));
+                instances.Add(new ZooKeeperInstance(from + i, new DirectoryInfo("ZK-" + from).FullName, clientPort, peerPort, electionPort, log));
             }
 
             return instances;

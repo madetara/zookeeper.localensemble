@@ -10,14 +10,14 @@ namespace Vostok.ZooKeeper.LocalEnsemble
 {
     internal static class ZooKeeperDeployer
     {
-        public static void DeployInstances(List<ZooKeeperInstance> instances)
+        public static void DeployInstances(IReadOnlyList<ZooKeeperInstance> instances)
         {
             var configs = GenerateConfigs(instances);
             for (var i = 0; i < instances.Count; i++)
                 DeployInstance(instances[i], configs[i]);
         }
 
-        public static void CleanupInstances(List<ZooKeeperInstance> instances)
+        public static void CleanupInstances(IReadOnlyList<ZooKeeperInstance> instances)
         {
             foreach (var instance in instances)
             {
@@ -42,7 +42,7 @@ namespace Vostok.ZooKeeper.LocalEnsemble
             DeployFiles(instance, config);
         }
 
-        private static string[] GenerateConfigs(List<ZooKeeperInstance> instances)
+        private static string[] GenerateConfigs(IReadOnlyList<ZooKeeperInstance> instances)
         {
             var serversList = string.Join(Environment.NewLine, instances.Select(instance => $"server.{instance.Id}=localhost:{instance.PeerPort}:{instance.ElectionPort}"));
             var configs = new string[instances.Count];

@@ -13,9 +13,9 @@ namespace Vostok.ZooKeeper.LocalEnsemble
         private readonly IntPtr jobObjectInfoPtr;
         private readonly ILog log;
 
-        public WindowsProcessKillJob(ILog log = null)
+        public WindowsProcessKillJob(ILog log)
         {
-            this.log = log ?? new SilentLog();
+            this.log = log.ForContext<WindowsProcessKillJob>();
             jobHandle = Kernel32.CreateJobObject(IntPtr.Zero, IntPtr.Zero);
             if (jobHandle == IntPtr.Zero)
                 throw new Win32Exception(Marshal.GetLastWin32Error());
@@ -62,11 +62,11 @@ namespace Vostok.ZooKeeper.LocalEnsemble
             AddProcess(process.Handle);
         }
 
-        public void AddProcess(IntPtr processHandle)
+        private void AddProcess(IntPtr processHandle)
         {
             if (Kernel32.AssignProcessToJobObject(jobHandle, processHandle))
                 return;
-            log.Error(new Win32Exception(Marshal.GetLastWin32Error()), "ProcessKillJob. Failed to add process to job.");
+            log.Error(new Win32Exception(Marshal.GetLastWin32Error()), "Failed to add process to job.");
         }
     }
 }

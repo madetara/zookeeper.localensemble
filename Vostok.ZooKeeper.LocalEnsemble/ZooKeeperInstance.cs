@@ -117,7 +117,6 @@ namespace Vostok.ZooKeeper.LocalEnsemble
                 {
                     process.Kill();
                     process.WaitForExit();
-                    //log.Debug($"INSTANCE {Id} LOG:\n" + File.ReadAllText(Path.Combine(BaseDirectory, $"ZK-{Id}.log")));
                 }
                 catch
                 {
@@ -128,7 +127,9 @@ namespace Vostok.ZooKeeper.LocalEnsemble
             process = null;
         }
 
-        /// <returns>String representation of ZooKeeperInstance.</returns>
+        /// <summary>
+        /// String representation of ZooKeeperInstance.
+        /// </summary>
         public override string ToString() => $"localhost:{ClientPort}:{PeerPort}:{ElectionPort} (id {Id}) at '{BaseDirectory}'";
 
         private string BuildRunZooKeeperArguments()
