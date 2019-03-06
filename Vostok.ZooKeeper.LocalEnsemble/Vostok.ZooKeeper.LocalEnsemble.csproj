@@ -53,13 +53,5 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\vostok.logging.abstractions\Vostok.Logging.Abstractions\bin\Release\netstandard2.0\Vostok.Logging.Abstractions.dll</HintPath>
     </Reference>
-    <Reference Include="Vostok.Commons.Time">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\vostok.commons.time\Vostok.Commons.Time\bin\Release\netstandard2.0\Vostok.Commons.Time.dll</HintPath>
-    </Reference>
-    <Reference Include="Vostok.Commons.Environment">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\vostok.commons.environment\Vostok.Commons.Environment\bin\Release\netstandard2.0\Vostok.Commons.Environment.dll</HintPath>
-    </Reference>
   </ItemGroup>
 </Project>
