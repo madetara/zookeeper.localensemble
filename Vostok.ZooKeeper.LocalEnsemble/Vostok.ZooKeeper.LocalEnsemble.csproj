@@ -21,15 +21,6 @@
     <RepositoryUrl>https://github.com/vostok/zookeeper.localensemble</RepositoryUrl>
   </PropertyGroup>
   <ItemGroup>
-    <None Remove="Resources\jarjar-1.4.jar" />
-    <None Remove="Resources\jline_0_9_94.jar" />
-    <None Remove="Resources\log4j_1_2_15.jar" />
-    <None Remove="Resources\netty_3_2_2_Final.jar" />
-    <None Remove="Resources\slf4j_api_1_6_1.jar" />
-    <None Remove="Resources\slf4j_log4j12_1_6_1.jar" />
-    <None Remove="Resources\zookeeper_3_4_5.jar" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Resources\jarjar-1.4.jar" />
     <EmbeddedResource Include="Resources\jline_0_9_94.jar" />
     <EmbeddedResource Include="Resources\log4j_1_2_15.jar" />
