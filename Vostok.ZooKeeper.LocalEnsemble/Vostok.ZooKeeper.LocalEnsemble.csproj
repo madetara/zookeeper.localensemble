@@ -27,10 +27,6 @@
     <None Remove="Resources\netty_3_2_2_Final.jar" />
     <None Remove="Resources\slf4j_api_1_6_1.jar" />
     <None Remove="Resources\slf4j_log4j12_1_6_1.jar" />
-    <None Remove="Resources\zkEnv.cmd" />
-    <None Remove="Resources\zkEnv.sh" />
-    <None Remove="Resources\zkServer.cmd" />
-    <None Remove="Resources\zkServer.sh" />
     <None Remove="Resources\zookeeper_3_4_5.jar" />
   </ItemGroup>
   <ItemGroup>
