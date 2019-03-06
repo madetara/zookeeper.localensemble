@@ -43,9 +43,6 @@
     <EmbeddedResource Include="Resources\zookeeper_3_4_5.jar" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="System.Management" Version="4.5.0" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="..\..\vostok.commons.helpers\Vostok.Commons.Helpers\Network\FreeTcpPortFinder.cs" Link="Commons\FreeTcpPortFinder.cs" />
   </ItemGroup>
   <ItemGroup>
