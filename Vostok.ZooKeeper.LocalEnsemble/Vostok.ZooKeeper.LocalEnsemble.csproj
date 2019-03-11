@@ -1,4 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
+
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\..\vostok.devtools\library-common-props\Main-Project.props" />
   <Import Project="..\..\vostok.devtools\git-commit-to-assembly-title\Vostok.Tools.GitCommit2AssemblyTitle.props" />
@@ -27,11 +28,13 @@
     <EmbeddedResource Include="Resources\netty_3_2_2_Final.jar" />
     <EmbeddedResource Include="Resources\slf4j_api_1_6_1.jar" />
     <EmbeddedResource Include="Resources\slf4j_log4j12_1_6_1.jar" />
-    <EmbeddedResource Include="Resources\zookeeper_3_4_5.jar" />
+    <EmbeddedResource Include="Resources\zookeeper_3_4_13.jar" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\vostok.commons.helpers\Vostok.Commons.Helpers\Network\FreeTcpPortFinder.cs" Link="Commons\FreeTcpPortFinder.cs" />
-    <Compile Include="..\..\vostok.commons.time\Vostok.Commons.Time\TimeSpanConversions.cs" Link="Commons\TimeSpanConversions.cs" />
+    <Compile Include="..\..\vostok.commons.helpers\Vostok.Commons.Helpers\Network\FreeTcpPortFinder.cs"
+             Link="Commons\FreeTcpPortFinder.cs" />
+    <Compile Include="..\..\vostok.commons.time\Vostok.Commons.Time\TimeSpanConversions.cs"
+             Link="Commons\TimeSpanConversions.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Vostok.Logging.Abstractions">

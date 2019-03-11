@@ -84,7 +84,7 @@ namespace Vostok.ZooKeeper.LocalEnsemble
             // (iloktionov): Control scripts.
             Directory.CreateDirectory(instance.BinDirectory);
             // (iloktionov): Actual ZK lib.
-            SaveResources(instance.BaseDirectory, "zookeeper_3_4_5.jar");
+            SaveResources(instance.BaseDirectory, "zookeeper_3_4_13.jar");
             // (iloktionov): Configs.
             File.WriteAllText(Path.Combine(instance.ConfDirectory, "zoo.cfg"), config);
             File.WriteAllText(Path.Combine(instance.ConfDirectory, "log4j.properties"), CreateLog4jConfig(instance));

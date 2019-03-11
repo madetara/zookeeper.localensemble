@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
@@ -37,6 +36,7 @@ namespace Vostok.ZooKeeper.LocalEnsemble.Misc
 
                 Thread.Sleep(0.5.Seconds());
             }
+
             log.Debug($"End waiting started. Not started after {timeout}.");
             return false;
         }

@@ -16,8 +16,8 @@ namespace Vostok.ZooKeeper.LocalEnsemble
     {
         private readonly ILog log;
         private readonly WindowsProcessKillJob processKillJob;
-        private Process process;
         private readonly ZooKeeperHealthChecker healthChecker;
+        private Process process;
 
         /// <inheritdoc cref="ZooKeeperInstance" />
         public ZooKeeperInstance(int id, string baseDirectory, int clientPort, int peerPort, int electionPort, ILog log)
