@@ -19,7 +19,7 @@ namespace Vostok.ZooKeeper.LocalEnsemble.Misc
         {
             this.host = host;
             this.port = port;
-            this.log = log.ForContext($"ZooKeeperHealthChecker[{host}:{port}]");
+            this.log = log.ForContext<ZooKeeperHealthChecker>().ForContext($"{host}:{port}");
         }
 
         public bool WaitStarted(TimeSpan timeout)
