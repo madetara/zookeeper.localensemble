@@ -19,34 +19,33 @@ namespace Vostok.ZooKeeper.LocalEnsemble
         private volatile bool isRunning;
         private volatile bool isDisposed;
 
-        public ZooKeeperEnsemble(int size, [NotNull] ILog log)
-            : this(1, size, log)
-        {
-        }
-
-        public ZooKeeperEnsemble(int startingId, int size, [NotNull] ILog log)
+        public ZooKeeperEnsemble([NotNull] ZooKeeperEnsembleSettings settings, [NotNull] ILog log)
         {
             this.log = (log ?? throw new ArgumentNullException(nameof(log))).ForContext<ZooKeeperEnsemble>();
 
-            if (size < 1)
-                throw new ArgumentOutOfRangeException(nameof(size));
+            if (settings.Size < 1)
+                throw new ArgumentOutOfRangeException(nameof(settings.Size), "Ensemble must have at least one instance.");
 
-            Instances = CreateInstances(startingId, size, this.log);
-
-            this.log.Info("Created instances: \n\t" + string.Join("\n\t", Instances.Select(i => i.ToString())));
+            Instances = CreateInstances(settings, this.log);
         }
 
-        public static ZooKeeperEnsemble DeployNew(int size, ILog log, bool startInstances = true)
+        [NotNull]
+        public static ZooKeeperEnsemble DeployNew([NotNull] ZooKeeperEnsembleSettings settings, [NotNull] ILog log, bool startInstances = true)
         {
-            return DeployNew(1, size, log, startInstances);
-        }
+            var ensemble = new ZooKeeperEnsemble(settings, log);
 
-        public static ZooKeeperEnsemble DeployNew(int startingId, int size, ILog log, bool startInstances = true)
-        {
-            var ensemble = new ZooKeeperEnsemble(startingId, size, log);
             ensemble.Deploy(startInstances);
+
             return ensemble;
         }
+
+        [NotNull]
+        public static ZooKeeperEnsemble DeployNew(int size, ILog log, bool startInstances = true)
+            => DeployNew(new ZooKeeperEnsembleSettings {Size = size}, log, startInstances);
+
+        [NotNull]
+        public static ZooKeeperEnsemble DeployNew(int startingId, int size, ILog log, bool startInstances = true)
+            => DeployNew(new ZooKeeperEnsembleSettings { StartingId = startingId, Size = size }, log, startInstances);
 
         /// <summary>
         /// Returns whether this ensemble has been disposed.
@@ -68,25 +67,6 @@ namespace Vostok.ZooKeeper.LocalEnsemble
         /// </summary>
         public string ConnectionString
             => string.Join(",", Instances.Select(instance => $"localhost:{instance.ClientPort}"));
-
-        /// <summary>
-        /// Deploys this ensemble's files to current working folder.
-        /// </summary>
-        public void Deploy(bool startInstances = true)
-        {
-            try
-            {
-                ZooKeeperDeployer.DeployInstances(Instances);
-                if (startInstances)
-                    Start();
-            }
-            catch (Exception error)
-            {
-                log.Error(error, "Error in starting. Will try to stop.");
-                Dispose();
-                throw;
-            }
-        }
 
         /// <summary>
         /// Starts all instances in this ensemble.
@@ -132,17 +112,45 @@ namespace Vostok.ZooKeeper.LocalEnsemble
             }
         }
 
-        private static List<ZooKeeperInstance> CreateInstances(int from, int size, ILog log)
+        private void Deploy(bool startInstances)
         {
-            var instances = new List<ZooKeeperInstance>(size);
-            for (var i = 0; i < size; i++)
+            try
+            {
+                ZooKeeperDeployer.DeployInstances(Instances);
+
+                if (startInstances)
+                    Start();
+            }
+            catch (Exception error)
+            {
+                log.Error(error, "Error in starting. Will try to stop.");
+                Dispose();
+                throw;
+            }
+        }
+
+        private static List<ZooKeeperInstance> CreateInstances(ZooKeeperEnsembleSettings settings, ILog log)
+        {
+            var instances = new List<ZooKeeperInstance>(settings.Size);
+
+            for (var i = 0; i < settings.Size; i++)
             {
                 var clientPort = FreeTcpPortFinder.GetFreePort();
                 var peerPort = FreeTcpPortFinder.GetFreePort();
                 var electionPort = FreeTcpPortFinder.GetFreePort();
-                var index = from + i;
-                instances.Add(new ZooKeeperInstance(index, new DirectoryInfo("ZK-" + index).FullName, clientPort, peerPort, electionPort, log));
+                var index = settings.StartingId + i;
+
+                var instanceDirectoryPath = "ZK-" + index;
+
+                if (!string.IsNullOrEmpty(settings.BaseDirectory))
+                    instanceDirectoryPath = Path.Combine(settings.BaseDirectory, instanceDirectoryPath);
+
+                instanceDirectoryPath = Path.GetFullPath(instanceDirectoryPath);
+
+                instances.Add(new ZooKeeperInstance(index, instanceDirectoryPath, clientPort, peerPort, electionPort, log));
             }
+
+            log.Info("Created instances: \n\t" + string.Join("\n\t", instances.Select(i => i.ToString())));
 
             return instances;
         }
