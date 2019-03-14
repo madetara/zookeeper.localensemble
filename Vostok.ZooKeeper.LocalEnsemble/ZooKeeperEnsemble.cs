@@ -73,7 +73,7 @@ namespace Vostok.ZooKeeper.LocalEnsemble
         public void Start()
         {
             if (isDisposed)
-                return;
+                throw new ObjectDisposedException(GetType().Name);
 
             log.Info("Starting ensemble...");
 
