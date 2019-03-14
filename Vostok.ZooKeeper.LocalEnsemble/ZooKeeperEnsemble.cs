@@ -8,9 +8,8 @@ using Vostok.Logging.Abstractions;
 
 namespace Vostok.ZooKeeper.LocalEnsemble
 {
-    /// <inheritdoc />
     /// <summary>
-    /// Represents ensemble of multiple ZooKeeper instances.
+    /// Represents a locally run ZooKeeper ensemble consisting of multiple <see cref="ZooKeeperInstance"/>s.
     /// </summary>
     [PublicAPI]
     public class ZooKeeperEnsemble : IDisposable
@@ -20,61 +19,47 @@ namespace Vostok.ZooKeeper.LocalEnsemble
         private volatile bool isRunning;
         private volatile bool isDisposed;
 
-        /// <inheritdoc cref="ZooKeeperInstance" />
-        public ZooKeeperEnsemble(int size, ILog log)
+        public ZooKeeperEnsemble(int size, [NotNull] ILog log)
             : this(1, size, log)
         {
         }
 
-        /// <inheritdoc cref="ZooKeeperInstance" />
-        public ZooKeeperEnsemble(int from, int size, ILog log)
+        public ZooKeeperEnsemble(int startingId, int size, [NotNull] ILog log)
         {
-            this.log = log.ForContext<ZooKeeperEnsemble>();
+            this.log = (log ?? throw new ArgumentNullException(nameof(log))).ForContext<ZooKeeperEnsemble>();
 
             if (size < 1)
                 throw new ArgumentOutOfRangeException(nameof(size));
-            Instances = CreateInstances(from, size, this.log);
+
+            Instances = CreateInstances(startingId, size, this.log);
 
             this.log.Info("Created instances: \n\t" + string.Join("\n\t", Instances.Select(i => i.ToString())));
         }
 
-        /// <summary>
-        /// Creates and deploys new <see cref="ZooKeeperEnsemble" />
-        /// </summary>
-        /// <param name="size">Amount of instances.</param>
-        /// <param name="log"><see cref="ILog" /> instance.</param>
-        /// <param name="startInstances">Starts instances after deploy or not.</param>
         public static ZooKeeperEnsemble DeployNew(int size, ILog log, bool startInstances = true)
         {
             return DeployNew(1, size, log, startInstances);
         }
 
-        /// <summary>
-        /// Creates and deploys new <see cref="ZooKeeperEnsemble" />
-        /// </summary>
-        /// <param name="from">First instance index.</param>
-        /// <param name="size">Amount of instances.</param>
-        /// <param name="log"><see cref="ILog" /> instance.</param>
-        /// <param name="startInstances">Starts instances after deploy or not.</param>
-        public static ZooKeeperEnsemble DeployNew(int from, int size, ILog log, bool startInstances = true)
+        public static ZooKeeperEnsemble DeployNew(int startingId, int size, ILog log, bool startInstances = true)
         {
-            var ensemble = new ZooKeeperEnsemble(from, size, log);
+            var ensemble = new ZooKeeperEnsemble(startingId, size, log);
             ensemble.Deploy(startInstances);
             return ensemble;
         }
 
         /// <summary>
-        /// Check that ensemble is disposed.
+        /// Returns whether this ensemble has been disposed.
         /// </summary>
         public bool IsDisposed => isDisposed;
 
         /// <summary>
-        /// Check that ensemble is running.
+        /// Returns whether this ensemble is currently running.
         /// </summary>
         public bool IsRunning => isRunning;
 
         /// <summary>
-        /// Returns <see cref="ZooKeeperInstance" /> instances of ensemble.
+        /// Returns <see cref="ZooKeeperInstance" />s of this ensemble.
         /// </summary>
         public IReadOnlyList<ZooKeeperInstance> Instances { get; }
 
@@ -82,14 +67,11 @@ namespace Vostok.ZooKeeper.LocalEnsemble
         /// Returns ensemble connection string.
         /// </summary>
         public string ConnectionString
-        {
-            get { return string.Join(",", Instances.Select(instance => $"localhost:{instance.ClientPort}")); }
-        }
+            => string.Join(",", Instances.Select(instance => $"localhost:{instance.ClientPort}"));
 
         /// <summary>
-        /// Deploys <see cref="ZooKeeperEnsemble" /> to folder.
+        /// Deploys this ensemble's files to current working folder.
         /// </summary>
-        /// <param name="startInstances">Starts instances after deploy or not.</param>
         public void Deploy(bool startInstances = true)
         {
             try
@@ -107,7 +89,7 @@ namespace Vostok.ZooKeeper.LocalEnsemble
         }
 
         /// <summary>
-        /// Starts <see cref="ZooKeeperEnsemble" /> to folder.
+        /// Starts all instances in this ensemble.
         /// </summary>
         public void Start()
         {
@@ -123,7 +105,7 @@ namespace Vostok.ZooKeeper.LocalEnsemble
         }
 
         /// <summary>
-        /// Stops <see cref="ZooKeeperEnsemble" /> to folder.
+        /// Stops all instances in this ensemble.
         /// </summary>
         public void Stop()
         {
@@ -138,10 +120,6 @@ namespace Vostok.ZooKeeper.LocalEnsemble
             }
         }
 
-        /// <inheritdoc />
-        /// <summary>
-        /// Stops all <see cref="T:Vostok.ZooKeeper.LocalEnsemble.ZooKeeperInstance" /> instances and cleans folder.
-        /// </summary>
         public void Dispose()
         {
             if (!isDisposed)
