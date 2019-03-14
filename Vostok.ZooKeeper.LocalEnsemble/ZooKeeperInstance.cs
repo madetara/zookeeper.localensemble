@@ -22,7 +22,8 @@ namespace Vostok.ZooKeeper.LocalEnsemble
         /// <inheritdoc cref="ZooKeeperInstance" />
         public ZooKeeperInstance(int id, string baseDirectory, int clientPort, int peerPort, int electionPort, ILog log)
         {
-            this.log = log;
+            this.log = log.ForContext($"id {id}");
+
             Id = id;
             BaseDirectory = baseDirectory;
             ClientPort = clientPort;

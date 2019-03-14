@@ -29,7 +29,8 @@ namespace Vostok.ZooKeeper.LocalEnsemble
         /// <inheritdoc cref="ZooKeeperInstance" />
         public ZooKeeperEnsemble(int from, int size, ILog log)
         {
-            this.log = log.ForContext<ZooKeeperEnsemble>().ForContext($"{from}:{from + size - 1}");
+            this.log = log.ForContext<ZooKeeperEnsemble>();
+
             if (size < 1)
                 throw new ArgumentOutOfRangeException(nameof(size));
             Instances = CreateInstances(from, size, this.log);
