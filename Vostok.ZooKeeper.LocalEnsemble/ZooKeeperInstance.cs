@@ -9,7 +9,7 @@ using Vostok.ZooKeeper.LocalEnsemble.Misc;
 namespace Vostok.ZooKeeper.LocalEnsemble
 {
     /// <summary>
-    /// Represents ZooKeeper instance based on java implementation.
+    /// Represents a locally run instance based of ZooKeeper service.
     /// </summary>
     [PublicAPI]
     public class ZooKeeperInstance
@@ -17,9 +17,8 @@ namespace Vostok.ZooKeeper.LocalEnsemble
         private readonly ILog log;
         private readonly WindowsProcessKillJob processKillJob;
         private readonly ZooKeeperHealthChecker healthChecker;
-        private Process process;
+        private volatile Process process;
 
-        /// <inheritdoc cref="ZooKeeperInstance" />
         public ZooKeeperInstance(int id, string baseDirectory, int clientPort, int peerPort, int electionPort, ILog log)
         {
             this.log = log.ForContext($"id {id}");
@@ -29,12 +28,12 @@ namespace Vostok.ZooKeeper.LocalEnsemble
             ClientPort = clientPort;
             PeerPort = peerPort;
             ElectionPort = electionPort;
-            processKillJob = OsHelper.IsUnix ? null : new WindowsProcessKillJob(log);
+            processKillJob = OsHelper.IsUnix ? null : new WindowsProcessKillJob(this.log);
             healthChecker = new ZooKeeperHealthChecker(this.log, "localhost", clientPort);
         }
 
         /// <summary>
-        /// Returns instance id.
+        /// Returns numeric instance id.
         /// </summary>
         public int Id { get; }
 
@@ -79,7 +78,7 @@ namespace Vostok.ZooKeeper.LocalEnsemble
         public string DataDirectory => Path.Combine(BinDirectory, "data");
 
         /// <summary>
-        /// Check that instance is running.
+        /// Returns whether this instance is currently running.
         /// </summary>
         public bool IsRunning => process?.HasExited == false;
 
@@ -88,15 +87,19 @@ namespace Vostok.ZooKeeper.LocalEnsemble
         /// </summary>
         public void Start()
         {
+            if (IsRunning)
+                return;
+
             var processStartInfo = new ProcessStartInfo("java")
             {
-                Arguments = BuildRunZooKeeperArguments(),
+                Arguments = BuildZooKeeperArguments(),
                 UseShellExecute = false,
                 CreateNoWindow = true,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 WorkingDirectory = BinDirectory
             };
+
             process = new Process
             {
                 StartInfo = processStartInfo
@@ -108,9 +111,6 @@ namespace Vostok.ZooKeeper.LocalEnsemble
             processKillJob?.AddProcess(process);
         }
 
-        /// <summary>
-        /// <para>Stops instance.</para>
-        /// </summary>
         public void Stop()
         {
             if (IsRunning)
@@ -129,12 +129,10 @@ namespace Vostok.ZooKeeper.LocalEnsemble
             process = null;
         }
 
-        /// <summary>
-        /// String representation of ZooKeeperInstance.
-        /// </summary>
-        public override string ToString() => $"localhost:{ClientPort}:{PeerPort}:{ElectionPort} (id {Id}) at '{BaseDirectory}'";
+        public override string ToString() 
+            => $"localhost:{ClientPort}:{PeerPort}:{ElectionPort} (id {Id}) at '{BaseDirectory}'";
 
-        private string BuildRunZooKeeperArguments()
+        private string BuildZooKeeperArguments()
         {
             var classPaths = new[]
             {
