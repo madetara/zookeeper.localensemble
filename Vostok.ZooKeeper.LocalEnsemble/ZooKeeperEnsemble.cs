@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using JetBrains.Annotations;
 using Vostok.Commons.Helpers.Network;
+using Vostok.Commons.Threading;
 using Vostok.Logging.Abstractions;
 
 namespace Vostok.ZooKeeper.LocalEnsemble
@@ -15,11 +16,9 @@ namespace Vostok.ZooKeeper.LocalEnsemble
     public class ZooKeeperEnsemble : IDisposable
     {
         private readonly ILog log;
+        private readonly AtomicBoolean isDisposed = new AtomicBoolean(false);
 
-        private volatile bool isRunning;
-        private volatile bool isDisposed;
-
-        public ZooKeeperEnsemble([NotNull] ZooKeeperEnsembleSettings settings, [NotNull] ILog log)
+        private ZooKeeperEnsemble([NotNull] ZooKeeperEnsembleSettings settings, [NotNull] ILog log)
         {
             this.log = (log ?? throw new ArgumentNullException(nameof(log))).ForContext<ZooKeeperEnsemble>();
 
@@ -55,7 +54,7 @@ namespace Vostok.ZooKeeper.LocalEnsemble
         /// <summary>
         /// Returns whether this ensemble is currently running.
         /// </summary>
-        public bool IsRunning => isRunning;
+        public bool IsRunning => Instances.Any(instance => instance.IsRunning);
 
         /// <summary>
         /// Returns <see cref="ZooKeeperInstance" />s of this ensemble.
@@ -63,7 +62,7 @@ namespace Vostok.ZooKeeper.LocalEnsemble
         public IReadOnlyList<ZooKeeperInstance> Instances { get; }
 
         /// <summary>
-        /// Returns ensemble connection string.
+        /// Returns connection string that can be used to connect to this ensemble.
         /// </summary>
         public string ConnectionString
             => string.Join(",", Instances.Select(instance => $"localhost:{instance.ClientPort}"));
@@ -73,15 +72,15 @@ namespace Vostok.ZooKeeper.LocalEnsemble
         /// </summary>
         public void Start()
         {
-            if (!isRunning)
-            {
-                isRunning = true;
+            if (isDisposed)
+                return;
 
-                log.Info("Starting ensemble...");
-                foreach (var instance in Instances)
-                    instance.Start();
-                log.Info("Started ensemble successfully.");
-            }
+            log.Info("Starting ensemble...");
+
+            foreach (var instance in Instances)
+                instance.Start();
+
+            log.Info("Started ensemble successfully.");
         }
 
         /// <summary>
@@ -89,26 +88,25 @@ namespace Vostok.ZooKeeper.LocalEnsemble
         /// </summary>
         public void Stop()
         {
-            if (isRunning)
-            {
-                log.Info("Stopping ensemble...");
-                foreach (var instance in Instances)
-                    instance.Stop();
-                log.Info("Stopped ensemble successfully.");
+            log.Info("Stopping ensemble...");
 
-                isRunning = false;
-            }
+            foreach (var instance in Instances)
+                instance.Stop();
+
+            log.Info("Stopped ensemble successfully.");
         }
 
         public void Dispose()
         {
-            if (!isDisposed)
+            if (isDisposed.TrySetTrue())
             {
                 Stop();
+
                 log.Info("Cleaning directories...");
+
                 ZooKeeperDeployer.CleanupInstances(Instances);
+
                 log.Info("Cleaned directories successfully.");
-                isDisposed = true;
             }
         }
 
