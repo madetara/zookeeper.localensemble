@@ -1,26 +1,30 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\..\vostok.devtools\library-common-props\Main-Project.props" />
   <Import Project="..\..\vostok.devtools\git-commit-to-assembly-title\Vostok.Tools.GitCommit2AssemblyTitle.props" />
+
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Configurations>Debug;Release</Configurations>
     <LangVersion>7.2</LangVersion>
   </PropertyGroup>
+
   <PropertyGroup>
     <VersionPrefix>0.0.1</VersionPrefix>
   </PropertyGroup>
+
   <PropertyGroup>
     <Title>Vostok.ZooKeeper.LocalEnsemble</Title>
-    <Description>Local ZooKeeper cluster runner for testing needs.</Description>
+    <Description>This library allows to deploy and run a local ZooKeeper cluster for testing purposes.</Description>
   </PropertyGroup>
+
   <PropertyGroup>
     <PackageProjectUrl>https://github.com/vostok/zookeeper.localensemble</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/vostok/zookeeper.localensemble/blob/master/LICENSE</PackageLicenseUrl>
     <PackageTags>vostok vostok.zookeeper</PackageTags>
     <RepositoryUrl>https://github.com/vostok/zookeeper.localensemble</RepositoryUrl>
   </PropertyGroup>
+
   <ItemGroup>
     <EmbeddedResource Include="Resources\jarjar-1.4.jar" />
     <EmbeddedResource Include="Resources\jline_0_9_94.jar" />
@@ -30,16 +34,17 @@
     <EmbeddedResource Include="Resources\slf4j_log4j12_1_6_1.jar" />
     <EmbeddedResource Include="Resources\zookeeper_3_4_13.jar" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="..\..\vostok.commons.helpers\Vostok.Commons.Helpers\Network\FreeTcpPortFinder.cs"
-             Link="Commons\FreeTcpPortFinder.cs" />
-    <Compile Include="..\..\vostok.commons.time\Vostok.Commons.Time\TimeSpanConversions.cs"
-             Link="Commons\TimeSpanConversions.cs" />
+    <Compile Include="..\..\vostok.commons.helpers\Vostok.Commons.Helpers\Network\FreeTcpPortFinder.cs" Link="Commons\FreeTcpPortFinder.cs" />
+    <Compile Include="..\..\vostok.commons.time\Vostok.Commons.Time\TimeSpanConversions.cs" Link="Commons\TimeSpanConversions.cs" />
   </ItemGroup>
+
   <ItemGroup>
     <Reference Include="Vostok.Logging.Abstractions">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\vostok.logging.abstractions\Vostok.Logging.Abstractions\bin\Release\netstandard2.0\Vostok.Logging.Abstractions.dll</HintPath>
     </Reference>
   </ItemGroup>
+  
 </Project>
