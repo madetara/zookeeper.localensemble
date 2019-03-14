@@ -9,10 +9,10 @@ notests *default:
     - Vostok.ZooKeeper.LocalEnsemble/bin/Release/netstandard2.0/Vostok.ZooKeeper.LocalEnsemble.dll
 
   deps:
-    - vostok.commons.helpers/src
-    - vostok.logging.abstractions
     - vostok.devtools
+    - vostok.logging.abstractions
     - vostok.commons.time/src
+    - vostok.commons.helpers/src
 
 full-build > notests:
   build:
