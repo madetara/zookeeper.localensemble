@@ -61,7 +61,7 @@ namespace Vostok.ZooKeeper.LocalEnsemble.Helpers
 
                     var result = reader.ReadToEnd();
 
-                    log.Debug($"Responce to `{word}` command is '{result}'.");
+                    log.Debug($"Response to `{word}` command is '{result}'.");
                     return result;
                 }
             }
