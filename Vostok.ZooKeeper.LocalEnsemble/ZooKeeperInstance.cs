@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 using JetBrains.Annotations;
 using Vostok.Commons.Time;
 using Vostok.Logging.Abstractions;
@@ -105,8 +106,18 @@ namespace Vostok.ZooKeeper.LocalEnsemble
                 StartInfo = processStartInfo
             };
 
-            if (!process.Start() || !healthChecker.WaitStarted(20.Seconds()))
-                throw new Exception($"Failed to start process of participant '{Id}'.");
+            if (!process.Start())
+                throw new Exception($"Failed to start process of instance '{Id}'.");
+
+            Task.Run(
+                async () =>
+                {
+                    while (!process.StandardError.EndOfStream)
+                        log.Error(await process.StandardError.ReadLineAsync().ConfigureAwait(false));
+                });
+
+            if (!healthChecker.WaitStarted(20.Seconds()))
+                throw new Exception($"instance '{Id}' has not warmed up in 20 seconds..");
 
             processKillJob?.AddProcess(process);
         }
