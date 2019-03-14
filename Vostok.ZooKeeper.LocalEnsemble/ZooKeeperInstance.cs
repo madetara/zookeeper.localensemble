@@ -4,7 +4,7 @@ using System.IO;
 using JetBrains.Annotations;
 using Vostok.Commons.Time;
 using Vostok.Logging.Abstractions;
-using Vostok.ZooKeeper.LocalEnsemble.Misc;
+using Vostok.ZooKeeper.LocalEnsemble.Helpers;
 
 namespace Vostok.ZooKeeper.LocalEnsemble
 {
@@ -115,6 +115,8 @@ namespace Vostok.ZooKeeper.LocalEnsemble
         {
             if (IsRunning)
             {
+                log.Debug("Stopping..");
+
                 try
                 {
                     process.Kill();
