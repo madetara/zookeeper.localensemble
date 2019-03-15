@@ -22,6 +22,7 @@
     <PackageProjectUrl>https://github.com/vostok/zookeeper.localensemble</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/vostok/zookeeper.localensemble/blob/master/LICENSE</PackageLicenseUrl>
     <PackageTags>vostok vostok.zookeeper</PackageTags>
+    <PackageReleaseNotes>https://github.com/vostok/zookeeper.localensemble/blob/master/CHANGELOG.md</PackageReleaseNotes>
     <RepositoryUrl>https://github.com/vostok/zookeeper.localensemble</RepositoryUrl>
   </PropertyGroup>
 
