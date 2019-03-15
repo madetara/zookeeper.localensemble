@@ -142,7 +142,7 @@ namespace Vostok.ZooKeeper.LocalEnsemble
             process = null;
         }
 
-        public override string ToString() 
+        public override string ToString()
             => $"localhost:{ClientPort}:{PeerPort}:{ElectionPort} (id {Id}) at '{BaseDirectory}'";
 
         private string BuildZooKeeperArguments()

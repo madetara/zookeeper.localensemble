@@ -44,7 +44,7 @@ namespace Vostok.ZooKeeper.LocalEnsemble
 
         [NotNull]
         public static ZooKeeperEnsemble DeployNew(int startingId, int size, ILog log, bool startInstances = true)
-            => DeployNew(new ZooKeeperEnsembleSettings { StartingId = startingId, Size = size }, log, startInstances);
+            => DeployNew(new ZooKeeperEnsembleSettings {StartingId = startingId, Size = size}, log, startInstances);
 
         /// <summary>
         /// Returns whether this ensemble has been disposed.
@@ -110,23 +110,6 @@ namespace Vostok.ZooKeeper.LocalEnsemble
             }
         }
 
-        private void Deploy(bool startInstances)
-        {
-            try
-            {
-                ZooKeeperDeployer.DeployInstances(Instances);
-
-                if (startInstances)
-                    Start();
-            }
-            catch (Exception error)
-            {
-                log.Error(error, "Error in starting. Will try to stop.");
-                Dispose();
-                throw;
-            }
-        }
-
         private static List<ZooKeeperInstance> CreateInstances(ZooKeeperEnsembleSettings settings, ILog log)
         {
             var instances = new List<ZooKeeperInstance>(settings.Size);
@@ -151,6 +134,23 @@ namespace Vostok.ZooKeeper.LocalEnsemble
             log.Info("Created instances: \n\t" + string.Join("\n\t", instances.Select(i => i.ToString())));
 
             return instances;
+        }
+
+        private void Deploy(bool startInstances)
+        {
+            try
+            {
+                ZooKeeperDeployer.DeployInstances(Instances);
+
+                if (startInstances)
+                    Start();
+            }
+            catch (Exception error)
+            {
+                log.Error(error, "Error in starting. Will try to stop.");
+                Dispose();
+                throw;
+            }
         }
     }
 }

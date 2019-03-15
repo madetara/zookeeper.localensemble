@@ -24,11 +24,11 @@ namespace Vostok.ZooKeeper.LocalEnsemble.Tests
         public void DeployNew_should_use_from_index()
         {
             using (var ensemble1 = ZooKeeperEnsemble.DeployNew(1, 3, log))
-                using (var ensemble2 = ZooKeeperEnsemble.DeployNew(10, 3, log))
-                {
-                    ensemble1.IsRunning.Should().BeTrue();
-                    ensemble2.IsRunning.Should().BeTrue();
-                }
+            using (var ensemble2 = ZooKeeperEnsemble.DeployNew(10, 3, log))
+            {
+                ensemble1.IsRunning.Should().BeTrue();
+                ensemble2.IsRunning.Should().BeTrue();
+            }
         }
 
         [TestCase(3)]
