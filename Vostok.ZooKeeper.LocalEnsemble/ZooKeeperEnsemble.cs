@@ -68,6 +68,12 @@ namespace Vostok.ZooKeeper.LocalEnsemble
             => string.Join(",", Instances.Select(instance => $"localhost:{instance.ClientPort}"));
 
         /// <summary>
+        /// Returns ensemble topology.
+        /// </summary>
+        public Uri[] Topology
+            => Instances.Select(instance => new Uri("http://localhost:" + instance.ClientPort)).ToArray();
+
+        /// <summary>
         /// Starts all instances in this ensemble.
         /// </summary>
         public void Start()
